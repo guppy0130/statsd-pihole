@@ -10,7 +10,7 @@ const port = 8125;
 const prefix = '_t_';
 const interval = 1000; //update every 10s
 
-const debug = false;
+const debug = true;
 
 /**
  * Creates a tag object
@@ -120,6 +120,24 @@ const main = () => {
                 } else {
                     send(statsdFormat(stat, data[stat], 'c', [tag('pihole', 'top')]));
                 }
+            }
+        });
+    });
+
+    http.get(`http://${piholeAPI}/admin/api.php?getQueryTypes`, (res) => {
+        res.setEncoding('utf8');
+        let rawData = '';
+
+        res.on('data', chunk => {
+            rawData += chunk;
+        });
+
+
+        res.on('end', () => {
+            const data = (JSON.parse(rawData))['querytypes'];
+
+            for (let record in data) {
+                send(statsdFormat('record_type', data[record], 'c', [tag('type', record)]));
             }
         });
     });
