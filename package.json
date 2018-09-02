@@ -1,0 +1,22 @@
+{
+  "name": "statsd-pihole",
+  "version": "1.0.0",
+  "description": "Send pihole stats to statsd",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/guppy0130/statsd-pihole.git"
+  },
+  "author": "Guppy0130",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/guppy0130/statsd-pihole/issues"
+  },
+  "homepage": "https://gitlab.com/guppy0130/statsd-pihole#readme",
+  "devDependencies": {
+    "eslint": "^5.5.0"
+  }
+}
