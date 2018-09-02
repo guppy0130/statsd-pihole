@@ -5,12 +5,12 @@ const udp = dgram.createSocket('udp4');
 /* some user-defined variables */
 const piholeAPI = '192.168.1.28';
 
-const statsd = '192.168.1.128';
-const statsdPort = 8125;
+const address = '192.168.1.128';
+const port = 8125;
 const prefix = '_t_';
-const interval = 1000 * 10; //update every 10s
+const interval = 1000; //update every 10s
 
-const debug = true;
+const debug = false;
 
 /**
  * Creates a tag object
@@ -41,9 +41,8 @@ const send = (message) => {
         message = message.join('\n');
     }
 
-
     if (!debug) {
-        udp.send(message, statsdPort, statsd, (err) => {
+        udp.send(message, port, address, (err) => {
             if (err) {
                 console.log(err);
             }
@@ -74,10 +73,10 @@ const statsdFormat = (metric, value, type, moreTags) => {
 
     /**
      * parse through all the tags, adding the prefix and formatting tags for sending
-     * add the default source:pihole tag
+     * add the default location:pihole tag
      */
     moreTags = moreTags || [];
-    moreTags.push(tag('source', 'pihole'));
+    moreTags.push(tag('location', 'pihole'));
     tags = moreTags.map(elem => {
         return `${prefix}${elem.tag}.${elem.value}`;
     }).join('.');
@@ -101,7 +100,7 @@ const main = () => {
         res.on('end', () => {
             const data = JSON.parse(rawData);
 
-            ['status', 'clients_ever_seen', 'unique_clients', 'unique_domains'].forEach(elem => {
+            ['status', 'clients_ever_seen', 'unique_clients', 'unique_domains', 'FTLnotrunning'].forEach(elem => {
                 delete data[elem];
             });
 
@@ -119,7 +118,7 @@ const main = () => {
                         }
                     }
                 } else {
-                    send(statsdFormat(stat, data[stat], 'c', [tag('pihole', 'root')]));
+                    send(statsdFormat(stat, data[stat], 'c', [tag('pihole', 'top')]));
                 }
             }
         });
