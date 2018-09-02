@@ -141,6 +141,25 @@ const main = () => {
             }
         });
     });
+
+    http.get(`http://${piholeAPI}/admin/api.php?getForwardDestinations`, (res) => {
+        res.setEncoding('utf8');
+        let rawData = '';
+
+        res.on('data', chunk => {
+            rawData += chunk;
+        });
+
+
+        res.on('end', () => {
+            const data = (JSON.parse(rawData))['forward_destinations'];
+
+            for (let location in data) {
+                let ip = location.split('|')[1];
+                send(statsdFormat('forward_destinations', data[location], 'c', [tag('destination_ip', ip)]));
+            }
+        });
+    });
 };
 
 setInterval(main, interval);
